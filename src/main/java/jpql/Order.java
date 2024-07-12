@@ -1,6 +1,6 @@
 package jpql;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "ORDERS")
