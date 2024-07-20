@@ -37,21 +37,38 @@ public class JpaMain {
             member3.changeTeam(teamB);
             em.persist(member3);
 
-            em.flush();
+//            em.flush();
+//            em.clear();
+
+//            String query = "select m from Member m where m.id = :memberId"; //FK as well
+//
+//            Member findMember = em.createQuery(query, Member.class)
+//                            .setParameter("memberId", member1.getId())
+//                            .getSingleResult();
+//
+//            System.out.println("findMember = " + findMember);
+
+
+//            List<Member> resultList = em.createNamedQuery("Member.findByUsername", Member.class)
+//                    .setParameter("username", "member2")
+//                    .getResultList();
+//
+//            for (Member member : resultList) {
+//                System.out.println("member = " + member);
+//            }
+
+            //flush 자동 호출
+            int resultCount = em.createQuery("update Member m set m.age = 20")
+                    .executeUpdate();
+
+            System.out.println("resultCount = " + resultCount);
+
             em.clear();
 
-            //String query = "select m from Member m join fetch m.team";
-            String query = "select distinct t from Team t join fetch t.members"; // 1:N
+            Member findMember = em.find(Member.class, member1.getId());
 
-           List<Team> result = em.createQuery(query, Team.class)
-                           .getResultList();
-
-            for (Team team : result) {
-                System.out.println("team = " + team.getName() + ", " + team.getMembers().size());
-            }
-
-           em.createQuery(query);
-
+            System.out.println("findMember.getAge() = " + findMember.getAge());
+            
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
