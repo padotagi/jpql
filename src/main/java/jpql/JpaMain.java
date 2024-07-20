@@ -14,52 +14,40 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Team team = new Team();
-            team.setName("tramA");
-            em.persist(team);
+            Team teamA = new Team();
+            teamA.setName("teamA");
+            em.persist(teamA);
 
-            Member member = new Member();
-            member.setUsername("member1");
-            member.setAge(10);
-            //member.setType(MemberType.ADMIN);
+            Team teamB = new Team();
+            teamB.setName("teamB");
+            em.persist(teamB);
+
+            Member member1 = new Member();
+            member1.setUsername("member1");
+            member1.changeTeam(teamA);
+            em.persist(member1);
 
             Member member2 = new Member();
             member2.setUsername("member2");
+            member2.changeTeam(teamA);
             em.persist(member2);
 
-            member.changeTeam(team);
-
-            em.persist(member);
+            Member member3 = new Member();
+            member3.setUsername("member3");
+            member3.changeTeam(teamB);
+            em.persist(member3);
 
             em.flush();
             em.clear();
 
-            /* Join
-            String query = "select m from Member m inner join m.team t";
-            //                  + "where m.type = jpql.MemberType.ADMIN";
-            List<Member> result = em.createQuery(query, Member.class)
-                            .setFirstResult(1)
-                            .setMaxResults(10)
-                             .getResultList();
-           */
+            //String query = "select m from Member m join fetch m.team";
+            String query = "select distinct t from Team t join fetch t.members"; // 1:N
 
-           /* CASE */
-//           String query =
-//                    "select " +
-//                        "case when m.age <= 10 then '학생요금' " +
-//                            "when m.age >= 60 then '경로요금' " +
-//                            "else '일반요금' " +
-//                        "end " +
-//                    "from Member m";
-
-           /* 사용자 정의 함수 */
-            String query = "select function('group_concat', m.username) from Member m";
-
-           List<String> result = em.createQuery(query, String.class)
+           List<Team> result = em.createQuery(query, Team.class)
                            .getResultList();
 
-            for (String s : result) {
-                System.out.println("s = " + s);
+            for (Team team : result) {
+                System.out.println("team = " + team.getName() + ", " + team.getMembers().size());
             }
 
            em.createQuery(query);
